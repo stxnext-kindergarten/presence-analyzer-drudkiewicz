@@ -7,7 +7,7 @@ import json
 import datetime
 import unittest
 
-from presence_analyzer import main, views, utils
+from presence_analyzer import main, utils
 
 
 TEST_DATA_CSV = os.path.join(
@@ -15,7 +15,7 @@ TEST_DATA_CSV = os.path.join(
 )
 
 
-# pylint: disable=E1103
+# pylint: disable=E1103, R0904
 class PresenceAnalyzerViewsTestCase(unittest.TestCase):
     """
     Views tests.
@@ -89,10 +89,10 @@ def suite():
     """
     Default test suite.
     """
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(PresenceAnalyzerViewsTestCase))
-    suite.addTest(unittest.makeSuite(PresenceAnalyzerUtilsTestCase))
-    return suite
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(unittest.makeSuite(PresenceAnalyzerViewsTestCase))
+    test_suite.addTest(unittest.makeSuite(PresenceAnalyzerUtilsTestCase))
+    return test_suite
 
 
 if __name__ == '__main__':

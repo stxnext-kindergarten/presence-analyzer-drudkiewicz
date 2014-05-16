@@ -13,7 +13,7 @@ from flask import Response
 from presence_analyzer.main import app
 
 import logging
-log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
+log = logging.getLogger(__name__)  # pylint: disable=C0103
 
 
 def jsonify(function):
@@ -22,6 +22,9 @@ def jsonify(function):
     """
     @wraps(function)
     def inner(*args, **kwargs):
+        """
+        Inner function of jsonify.
+        """
         return Response(dumps(function(*args, **kwargs)),
                         mimetype='application/json')
     return inner
