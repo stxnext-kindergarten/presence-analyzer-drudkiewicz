@@ -6,8 +6,9 @@ import os.path
 import json
 import datetime
 import unittest
+from mock import patch
 
-from presence_analyzer import main, utils
+from presence_analyzer import main, utils, views
 
 
 TEST_DATA_CSV = os.path.join(
@@ -53,6 +54,55 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_mean_time_weekday_view(self):
+        """
+        Test mean time weekday view.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        non_empty_data = [item for item in data if item[1] != 0]
+
+        self.assertEqual(len(non_empty_data), 3)
+        self.assertEqual(non_empty_data[0][0], 'Tue')
+
+    @patch.object(views, 'log')
+    def test_mean_time_weekday_user(self, mocked_log):
+        """
+        Test mean time weekday view with invalid user_id.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/1')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        mocked_log.debug.assert_called_with('User %s not found!', 1)
+
+    def test_presence_weekday_view(self):
+        """
+        Test presence weekday view.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 8)
+        self.assertEqual(data[0], [u'Weekday', u'Presence (s)'])
+        data.pop(0)
+        non_empty_data = [item for item in data if item[1] != 0]
+        self.assertEqual(len(non_empty_data), 3)
+        self.assertEqual(non_empty_data[0][0], 'Tue')
+
+    @patch.object(views, 'log')
+    def test_presence_weekday_user(self, mocked_log):
+        """
+        Test presence weekday view with invalid user_id.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/1')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        mocked_log.debug.assert_called_with('User %s not found!', 1)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -83,6 +133,49 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
         self.assertEqual(data[10][sample_date]['start'],
                          datetime.time(9, 39, 5))
+        self.assertEqual(len(data[11]), 5)
+
+    def test_interval(self):
+        """
+        Test interval method
+        """
+        sample_date = {
+            "start": datetime.time(9, 39, 5),
+            "end": datetime.time(17, 59, 52)
+        }
+        interval = utils.interval(sample_date["start"], sample_date["end"])
+
+        self.assertEqual(interval, 30047)
+
+    def test_group_by_weekday(self):
+        """
+        Test grouping by weekday
+        """
+        data = utils.get_data()
+        weekdays = utils.group_by_weekday(data[10])
+
+        sample_date = {
+            "start": datetime.time(9, 39, 5),
+            "end": datetime.time(17, 59, 52)
+        }
+        presence = 0
+
+        for day, interval in weekdays.items():  # pylint: disable=W0612
+            if len(interval):
+                presence += 1
+
+        self.assertItemsEqual(weekdays, [0, 1, 2, 3, 4, 5, 6])
+        self.assertEqual(presence, 3)
+        self.assertEqual(
+            weekdays[1][0],
+            utils.interval(sample_date["start"], sample_date["end"])
+        )
+
+    def test_mean(self):
+        """
+        Test mean method
+        """
+        self.assertEqual(utils.mean([22999, 22969]), 22984)
 
 
 def suite():
