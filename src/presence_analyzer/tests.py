@@ -137,13 +137,12 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Test interval method
         """
-        sample_date = {
-            "start": datetime.time(9, 39, 5),
-            "end": datetime.time(17, 59, 52)
-        }
-        interval = utils.interval(sample_date["start"], sample_date["end"])
-
-        self.assertEqual(interval, 30047)
+        self.assertEqual(utils.interval(datetime.time(9, 39, 5),
+                                        datetime.time(17, 59, 52)), 30047)
+        self.assertEqual(utils.interval(datetime.time(0, 0, 0),
+                                        datetime.time(0, 0, 0)), 0)
+        self.assertEqual(utils.interval(datetime.time(0, 0, 10),
+                                        datetime.time(0, 0, 5)), -5)
 
     def test_group_by_weekday(self):
         """
@@ -167,6 +166,8 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Test mean method
         """
         self.assertEqual(utils.mean([22999, 22969]), 22984)
+        self.assertEqual(utils.mean([]), 0)
+        self.assertEqual(utils.mean([1]), 1)
 
 
 def suite():
