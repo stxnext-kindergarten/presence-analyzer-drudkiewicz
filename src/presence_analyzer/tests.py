@@ -86,12 +86,10 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)
-        self.assertEqual(len(data), 8)
-        self.assertEqual(data[0], [u'Weekday', u'Presence (s)'])
-        data.pop(0)
-        non_empty_data = [item for item in data if item[1] != 0]
-        self.assertEqual(len(non_empty_data), 3)
-        self.assertEqual(non_empty_data[0][0], 'Tue')
+        expected_output = [[u'Weekday', u'Presence (s)'], [u'Mon', 0],
+                           [u'Tue', 30047], [u'Wed', 24465], [u'Thu', 23705],
+                           [u'Fri', 0], [u'Sat', 0], [u'Sun', 0]]
+        self.assertEqual(data, expected_output)
 
     @patch.object(views, 'log')
     def test_presence_weekday_user(self, mocked_log):
@@ -153,23 +151,16 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         data = utils.get_data()
         weekdays = utils.group_by_weekday(data[10])
-
-        sample_date = {
-            "start": datetime.time(9, 39, 5),
-            "end": datetime.time(17, 59, 52)
+        expected_output = {
+            0: [],
+            1: [30047],
+            2: [24465],
+            3: [23705],
+            4: [],
+            5: [],
+            6: []
         }
-        presence = 0
-
-        for day, interval in weekdays.items():  # pylint: disable=W0612
-            if len(interval):
-                presence += 1
-
-        self.assertItemsEqual(weekdays, [0, 1, 2, 3, 4, 5, 6])
-        self.assertEqual(presence, 3)
-        self.assertEqual(
-            weekdays[1][0],
-            utils.interval(sample_date["start"], sample_date["end"])
-        )
+        self.assertEqual(weekdays, expected_output)
 
     def test_mean(self):
         """
