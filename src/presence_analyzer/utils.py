@@ -6,7 +6,7 @@ Helper functions used in views.
 import csv
 from json import dumps
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Response
 
@@ -102,3 +102,31 @@ def mean(items):
     Calculates arithmetic mean. Returns zero for empty lists.
     """
     return float(sum(items)) / len(items) if len(items) > 0 else 0
+
+
+def group_by_weekday_start_end(items):
+    """
+    Groups start and end presences by weekday.
+    """
+    weekdays = {i: {'start': [], 'end': []} for i in range(7)}
+    for date in items:
+        start = seconds_since_midnight(items[date]['start'])
+        end = seconds_since_midnight(items[date]['end'])
+        weekdays[date.weekday()]['start'].append(start)
+        weekdays[date.weekday()]['end'].append(end)
+
+    return weekdays
+
+
+def presence_start_end(items):
+    """
+    Groups mean start and end presences by weekday.
+    """
+
+    weekdays = group_by_weekday_start_end(items)
+    result = {weekday: {
+        'start': int(mean(time['start'])),
+        'end': int(mean(time['end']))}
+        for weekday, time in weekdays.items()}
+
+    return result
