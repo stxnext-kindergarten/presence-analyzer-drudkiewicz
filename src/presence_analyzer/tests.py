@@ -101,6 +101,29 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.content_type, 'application/json')
         mocked_log.debug.assert_called_with('User %s not found!', 1)
 
+    @patch.object(views, 'log')
+    def test_presence_start_end_user(self, mocked_log):
+        """
+        Test mean time weekday view with invalid user_id.
+        """
+        resp = self.client.get('/api/v1/presence_start_end/1')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        mocked_log.debug.assert_called_with('User %s not found!', 1)
+
+    def test_presence_start_end_view(self):
+        """
+        Test presence weekday view.
+        """
+        resp = self.client.get('/api/v1/presence_start_end/10')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        expected_output = [[u'Mon', 0, 0], [u'Tue', 34745, 64792],
+                           [u'Wed', 33592, 58057], [u'Thu', 38926, 62631],
+                           [u'Fri', 0, 0], [u'Sat', 0, 0], [u'Sun', 0, 0]]
+        self.assertEqual(data, expected_output)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -135,7 +158,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
 
     def test_interval(self):
         """
-        Test interval method
+        Test interval method.
         """
         self.assertEqual(utils.interval(datetime.time(9, 39, 5),
                                         datetime.time(17, 59, 52)), 30047)
@@ -146,7 +169,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
 
     def test_group_by_weekday(self):
         """
-        Test grouping by weekday
+        Test grouping by weekday.
         """
         data = utils.get_data()
         weekdays = utils.group_by_weekday(data[10])
@@ -163,11 +186,44 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
 
     def test_mean(self):
         """
-        Test mean method
+        Test mean method.
         """
         self.assertEqual(utils.mean([22999, 22969]), 22984)
         self.assertEqual(utils.mean([]), 0)
         self.assertEqual(utils.mean([1]), 1)
+
+    def test_group_by_weekday_start_end(self):
+        """
+        Test grouping start and end presences by weekday.
+        """
+        data = utils.get_data()
+        weekdays = utils.group_by_weekday_start_end(data[10])
+        expected_output = {
+            0: {'start': [], 'end': []},
+            1: {'start': [34745], 'end': [64792]},
+            2: {'start': [33592], 'end': [58057]},
+            3: {'start': [38926], 'end': [62631]},
+            4: {'start': [], 'end': []},
+            5: {'start': [], 'end': []},
+            6: {'start': [], 'end': []}}
+        self.assertEqual(weekdays, expected_output)
+
+    def test_presence_start_end(self):
+        """
+        Test grouping mean start and mean end presences by weekday.
+        """
+        data = utils.get_data()
+        weekdays = utils.presence_start_end(data[10])
+        expected_output = {
+            0: {'start': 0, 'end': 0},
+            1: {'start': 34745, 'end': 64792},
+            2: {'start': 33592, 'end': 58057},
+            3: {'start': 38926, 'end': 62631},
+            4: {'start': 0, 'end': 0},
+            5: {'start': 0, 'end': 0},
+            6: {'start': 0, 'end': 0}}
+
+        self.assertEqual(weekdays, expected_output)
 
 
 def suite():

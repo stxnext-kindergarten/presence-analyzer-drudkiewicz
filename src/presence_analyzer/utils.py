@@ -6,7 +6,7 @@ Helper functions used in views.
 import csv
 from json import dumps
 from functools import wraps
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from flask import Response
 
@@ -120,13 +120,13 @@ def group_by_weekday_start_end(items):
 
 def presence_start_end(items):
     """
-    Groups mean start and end presences by weekday.
+    Groups mean start and mean end presences by weekday.
     """
 
     weekdays = group_by_weekday_start_end(items)
-    result = {weekday: {
-        'start': int(mean(time['start'])),
-        'end': int(mean(time['end']))}
+    result = {
+        weekday: {'start': int(mean(time['start'])),
+                  'end': int(mean(time['end']))}
         for weekday, time in weekdays.items()}
 
     return result
