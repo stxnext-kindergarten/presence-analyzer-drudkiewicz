@@ -104,7 +104,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
     @patch.object(views, 'log')
     def test_presence_start_end_user(self, mocked_log):
         """
-        Test mean time weekday view with invalid user_id.
+        Test presence mean start and mean end time view with invalid user_id.
         """
         resp = self.client.get('/api/v1/presence_start_end/1')
         self.assertEqual(resp.status_code, 200)
@@ -113,7 +113,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
 
     def test_presence_start_end_view(self):
         """
-        Test presence weekday view.
+        Test presence mean start and mean end time view.
         """
         resp = self.client.get('/api/v1/presence_start_end/10')
         self.assertEqual(resp.status_code, 200)
