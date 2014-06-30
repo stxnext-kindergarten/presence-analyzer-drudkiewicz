@@ -126,7 +126,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             [u'Thu', 38926, 62631],
             [u'Fri', 0, 0],
             [u'Sat', 0, 0],
-            [u'Sun', 0, 0]
+            [u'Sun', 0, 0],
         ]
         self.assertEqual(data, expected_output)
 
@@ -186,7 +186,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             3: [23705],
             4: [],
             5: [],
-            6: []
+            6: [],
         }
         self.assertEqual(weekdays, expected_output)
 
@@ -211,7 +211,8 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             3: {'start': [38926], 'end': [62631]},
             4: {'start': [], 'end': []},
             5: {'start': [], 'end': []},
-            6: {'start': [], 'end': []}}
+            6: {'start': [], 'end': []},
+        }
         self.assertEqual(weekdays, expected_output)
 
     def test_presence_start_end(self):
@@ -227,7 +228,8 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             3: {'start': 38926, 'end': 62631},
             4: {'start': 0, 'end': 0},
             5: {'start': 0, 'end': 0},
-            6: {'start': 0, 'end': 0}}
+            6: {'start': 0, 'end': 0},
+        }
 
         self.assertEqual(weekdays, expected_output)
 
