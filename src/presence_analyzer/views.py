@@ -63,8 +63,10 @@ def presence_weekday_view(user_id):
         return []
 
     weekdays = group_by_weekday(data[user_id])
-    result = [(calendar.day_abbr[weekday], sum(intervals))
-              for weekday, intervals in weekdays.items()]
+    result = [
+        (calendar.day_abbr[weekday], sum(intervals))
+        for weekday, intervals in weekdays.items()
+    ]
 
     result.insert(0, ('Weekday', 'Presence (s)'))
     return result
@@ -84,6 +86,7 @@ def presence_start_end_view(user_id):
     weekdays = presence_start_end(data[user_id])
     result = [
         (calendar.day_abbr[weekday], date_time['start'], date_time['end'])
-        for weekday, date_time in weekdays.items()]
+        for weekday, date_time in weekdays.items()
+    ]
 
     return result

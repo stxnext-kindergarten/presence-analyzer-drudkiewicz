@@ -119,9 +119,15 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)
-        expected_output = [[u'Mon', 0, 0], [u'Tue', 34745, 64792],
-                           [u'Wed', 33592, 58057], [u'Thu', 38926, 62631],
-                           [u'Fri', 0, 0], [u'Sat', 0, 0], [u'Sun', 0, 0]]
+        expected_output = [
+            [u'Mon', 0, 0],
+            [u'Tue', 34745, 64792],
+            [u'Wed', 33592, 58057],
+            [u'Thu', 38926, 62631],
+            [u'Fri', 0, 0],
+            [u'Sat', 0, 0],
+            [u'Sun', 0, 0]
+        ]
         self.assertEqual(data, expected_output)
 
 

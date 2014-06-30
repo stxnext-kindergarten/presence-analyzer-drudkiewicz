@@ -108,7 +108,13 @@ def group_by_weekday_start_end(items):
     """
     Groups start and end presences by weekday.
     """
-    weekdays = {i: {'start': [], 'end': []} for i in range(7)}
+    weekdays = {
+        i: {
+            'start': [],
+            'end': []
+        }
+        for i in range(7)
+    }
     for date in items:
         start = seconds_since_midnight(items[date]['start'])
         end = seconds_since_midnight(items[date]['end'])
@@ -125,8 +131,11 @@ def presence_start_end(items):
 
     weekdays = group_by_weekday_start_end(items)
     result = {
-        weekday: {'start': int(mean(time['start'])),
-                  'end': int(mean(time['end']))}
-        for weekday, time in weekdays.items()}
+        weekday: {
+            'start': int(mean(time['start'])),
+            'end': int(mean(time['end'])),
+        }
+        for weekday, time in weekdays.items()
+    }
 
     return result
