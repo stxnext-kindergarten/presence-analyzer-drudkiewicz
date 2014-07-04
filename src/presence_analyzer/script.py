@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Startup utilities"""
-#pylint:skip-file
+# pylint:skip-file
 
 import os
 import sys
@@ -43,7 +43,6 @@ def make_debug(global_conf={}, **conf):
 # bin/flask-ctl shell
 def make_shell():
     """Interactive Flask Shell"""
-    from flask import request
     app = make_app()
     http = app.test_client()
     reqctx = app.test_request_context
@@ -80,7 +79,6 @@ def _serve(action, debug=False, dry_run=False):
 
 # bin/flask-ctl ...
 def run():
-    action_shell = werkzeug.script.make_shell(make_shell, make_shell.__doc__)
 
     # bin/flask-ctl serve [fg|start|stop|restart|status]
     def action_serve(action=('a', 'start'), dry_run=False):
