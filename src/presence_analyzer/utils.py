@@ -30,6 +30,26 @@ def jsonify(function):
     return inner
 
 
+@app.template_global()
+def get_pages(page_url):
+    pages = [{
+        'link': 'mainpage',
+        'title': 'Presence by weekday'
+    }, {
+        'link': 'mean_time_weekday',
+        'title': 'Presence mean time'
+    }, {
+        'link': 'presence_start_end_route',
+        'title': 'Presence start-end'
+    }]
+
+    for page in pages:
+        if page.get('link') == page_url:
+            page['selected'] = True
+
+    return pages
+
+
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.
