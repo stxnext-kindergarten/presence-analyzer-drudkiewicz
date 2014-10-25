@@ -37,11 +37,27 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
 
     def test_mainpage(self):
         """
-        Test main page redirect.
+        Test main page.
         """
         resp = self.client.get('/')
-        self.assertEqual(resp.status_code, 302)
-        assert resp.headers['Location'].endswith('/presence_weekday.html')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'text/html; charset=utf-8')
+
+    def test_mean_time_weekday_page(self):
+        """
+        Test mean_time_weekday page.
+        """
+        resp = self.client.get('/mean_time_weekday')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'text/html; charset=utf-8')
+
+    def test_presence_start_end_page(self):
+        """
+        Test presence_start_end page.
+        """
+        resp = self.client.get('/presence_start_end')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'text/html; charset=utf-8')
 
     def test_api_users(self):
         """
