@@ -27,7 +27,7 @@
             <h1>Presence analyzer</h1>
             
             <ul>
-                {% for page in get_pages(page_url) %}
+                {% for page in get_menu(page_url) %}
                     <li {% if page.get('selected') %}id="selected"{% endif %}>
                         <a href="{{ url_for(page.get('link')) }}">{{ page.get('title') }}</a>
                     </li>

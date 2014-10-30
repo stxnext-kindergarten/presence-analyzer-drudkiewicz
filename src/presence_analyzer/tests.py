@@ -15,6 +15,15 @@ TEST_DATA_CSV = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data.csv'
 )
 
+TEST_MENU_CSV = os.path.join(
+    os.path.dirname(__file__),
+    '..',
+    '..',
+    'runtime',
+    'data',
+    'test_menu_data.csv'
+)
+
 
 # pylint: disable=E1103, R0904
 class PresenceAnalyzerViewsTestCase(unittest.TestCase):
@@ -157,12 +166,43 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({'MENU_CSV': TEST_MENU_CSV})
 
     def tearDown(self):
         """
         Get rid of unused objects after each test.
         """
         pass
+
+    def test_get_menu_data(self):
+        """
+        Test parsing menu data of CSV file.
+        """
+        data = utils.get_menu_data()
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 3)
+        sample_record = {
+            'link': 'mainpage',
+            'title': 'Presence by weekday'
+        }
+        self.assertEqual(sample_record, data[0])
+
+    @patch.object(utils, 'get_menu_data')
+    def test_get_menu(self, mocked_menu_data):
+        """
+        Test getting links and their titles
+        """
+        mocked_menu_data.return_value = [{
+            'link': 'mainpage',
+            'title': 'Presence by weekday'
+        }, {
+            'link': 'mean_time_weekday',
+            'title': 'Presence mean time'
+        }]
+        menu = utils.get_menu('mean_time_weekday')
+        self.assertNotIn('selected', menu[0])
+        self.assertIn('selected', menu[1])
+        self.assertTrue(menu[1].get('selected'))
 
     def test_get_data(self):
         """

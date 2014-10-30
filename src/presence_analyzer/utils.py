@@ -30,18 +30,35 @@ def jsonify(function):
     return inner
 
 
-@app.template_global()
-def get_pages(page_url):
-    pages = [{
+def get_menu_data():
+    """
+    Extracts menu data from CSV file
+
+    It creates structure like this:
+    data = [{
         'link': 'mainpage',
-        'title': 'Presence by weekday'
-    }, {
-        'link': 'mean_time_weekday',
-        'title': 'Presence mean time'
-    }, {
-        'link': 'presence_start_end_route',
-        'title': 'Presence start-end'
+        'title': 'This is mainpage'
     }]
+    """
+    data = []
+    with open(app.config['MENU_CSV'], 'r') as csvfile:
+        menu_reader = csv.reader(csvfile, delimiter=',')
+        for row in menu_reader:
+            data.append({
+                'link': row[0],
+                'title': row[1]
+            })
+
+    return data
+
+
+@app.template_global()
+def get_menu(page_url):
+    """
+    Gets links and their titles.
+    Adds 'selected' attribute to current page.
+    """
+    pages = get_menu_data()
 
     for page in pages:
         if page.get('link') == page_url:
