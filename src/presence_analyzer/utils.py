@@ -30,6 +30,43 @@ def jsonify(function):
     return inner
 
 
+def get_menu_data():
+    """
+    Extracts menu data from CSV file
+
+    It creates structure like this:
+    data = [{
+        'link': 'mainpage',
+        'title': 'This is mainpage'
+    }]
+    """
+    data = []
+    with open(app.config['MENU_CSV'], 'r') as csvfile:
+        menu_reader = csv.reader(csvfile, delimiter=',')
+        for row in menu_reader:
+            data.append({
+                'link': row[0],
+                'title': row[1]
+            })
+
+    return data
+
+
+@app.template_global()
+def get_menu(page_url):
+    """
+    Gets links and their titles.
+    Adds 'selected' attribute to current page.
+    """
+    pages = get_menu_data()
+
+    for page in pages:
+        if page.get('link') == page_url:
+            page['selected'] = True
+
+    return pages
+
+
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.

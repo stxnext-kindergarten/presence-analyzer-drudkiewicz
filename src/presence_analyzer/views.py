@@ -4,7 +4,7 @@ Defines views.
 """
 
 import calendar
-from flask import redirect
+from flask import render_template
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -17,9 +17,27 @@ log = logging.getLogger(__name__)  # pylint: disable=C0103
 @app.route('/')
 def mainpage():
     """
-    Redirects to front page.
+    Renders mainpage
     """
-    return redirect('/static/presence_weekday.html')
+    return render_template('presence_weekday.html', page_url='mainpage')
+
+
+@app.route('/mean_time_weekday')
+def mean_time_weekday():
+    """
+    Renders mean_time_weekday page
+    """
+    return render_template(
+        'mean_time_weekday.html', page_url='mean_time_weekday')
+
+
+@app.route('/presence_start_end')
+def presence_start_end_route():
+    """
+    Renders presence_start_end page
+    """
+    return render_template(
+        'presence_start_end.html', page_url='presence_start_end_route')
 
 
 @app.route('/api/v1/users', methods=['GET'])
