@@ -232,8 +232,9 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertItemsEqual(data.keys(), ['141', '176'])
         expexted_output = {
             '141': {
-                'name': 'Adam P.',
-                'avatar': 'https://intranet.stxnext.pl/api/images/users/141'
+                'name': u'Adam P.',
+                'avatar': 'https://intranet.stxnext.pl:443/' /
+                        'api/images/users/141'
             }
         }
         self.assertEqual(expexted_output['141'], data['141'])
