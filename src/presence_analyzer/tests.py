@@ -24,6 +24,24 @@ TEST_MENU_CSV = os.path.join(
     'test_menu_data.csv'
 )
 
+TEST_MENU_CSV = os.path.join(
+    os.path.dirname(__file__),
+    '..',
+    '..',
+    'runtime',
+    'data',
+    'test_menu_data.csv'
+)
+
+TEST_DATA_USERS = os.path.join(
+    os.path.dirname(__file__),
+    '..',
+    '..',
+    'runtime',
+    'data',
+    'test_users_data.xml'
+)
+
 
 # pylint: disable=E1103, R0904
 class PresenceAnalyzerViewsTestCase(unittest.TestCase):
@@ -167,6 +185,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
         main.app.config.update({'MENU_CSV': TEST_MENU_CSV})
+        main.app.config.update({'DATA_USERS': TEST_DATA_USERS})
 
     def tearDown(self):
         """
@@ -203,6 +222,21 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertNotIn('selected', menu[0])
         self.assertIn('selected', menu[1])
         self.assertTrue(menu[1].get('selected'))
+
+    def test_get_users(self):
+        """
+        Test parsing of xml file with users data.
+        """
+        data = utils.get_users()
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(data.keys(), ['141', '176'])
+        expexted_output = {
+            '141': {
+                'name': 'Adam P.',
+                'avatar': 'https://intranet.stxnext.pl/api/images/users/141'
+            }
+        }
+        self.assertEqual(expexted_output['141'], data['141'])
 
     def test_get_data(self):
         """
