@@ -5,7 +5,6 @@ Helper functions used in views.
 
 import csv
 from lxml import etree
-from StringIO import StringIO
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -71,9 +70,16 @@ def get_menu(page_url):
 
 @app.template_global()
 def get_users():
+    """
+    Gets dictionary with users data imported from xml file
+    """
     data = etree.parse(app.config['DATA_USERS']).getroot()
     server = data.find('server')
-    host = server.find('protocol').text + '://' + server.find('host').text
+    host = '{0}://{1}:{2}'.format(
+        server.find('protocol').text,
+        server.find('host').text,
+        server.find('port').text,
+    )
     data_users = data.find('users')
     users = {
         user.get('id'): {

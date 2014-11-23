@@ -4,10 +4,14 @@
 
 import os
 import sys
+import requests
 from functools import partial
 
 import paste.script.command
 import werkzeug.script
+
+import logging
+log = logging.getLogger(__name__)  # pylint: disable=C0103
 
 etc = partial(os.path.join, 'parts', 'etc')
 
@@ -23,6 +27,20 @@ for i in range(2 + __name__.count('.')):
 
 abspath = partial(os.path.join, _buildout_path)
 del _buildout_path
+
+
+def get_users_data():
+    """
+    Imports xml file with users data
+    """
+    with open('./runtime/data/users.xml', 'wb') as handle:
+        response = requests.get(
+            'http://sargo.bolt.stxnext.pl/users.xml', stream=True)
+
+        if response.ok:
+            handle.write(response.content)
+        else:
+            log.debug('Imporing users data does not succeed')
 
 
 # bin/paster serve parts/etc/deploy.ini
