@@ -33,14 +33,14 @@ def get_users_data():
     """
     Imports xml file with users data
     """
-    with open('./runtime/data/users.xml', 'wb') as handle:
-        response = requests.get(
-            'http://sargo.bolt.stxnext.pl/users.xml', stream=True)
+    response = requests.get(
+        'http://sargo.bolt.stxnext.pl/users.xml', stream=True)
 
-        if response.ok:
+    if response.ok:
+        with open('./runtime/data/users.xml', 'wb') as handle:
             handle.write(response.content)
-        else:
-            log.debug('Imporing users data does not succeed')
+    else:
+        log.debug('Imporing users data does not succeed')
 
 
 # bin/paster serve parts/etc/deploy.ini
