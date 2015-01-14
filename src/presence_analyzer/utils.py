@@ -4,6 +4,7 @@ Helper functions used in views.
 """
 
 import csv
+from lxml import etree
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -67,6 +68,29 @@ def get_menu(page_url):
     return pages
 
 
+@app.template_global()
+def get_users():
+    """
+    Gets dictionary with users data imported from xml file
+    """
+    data = etree.parse(app.config['DATA_USERS']).getroot()
+    server = data.find('server')
+    host = '{0}://{1}:{2}'.format(
+        server.find('protocol').text,
+        server.find('host').text,
+        server.find('port').text,
+    )
+    data_users = data.find('users')
+    users = {
+        user.get('id'): {
+            'name': unicode(user.find('name').text),
+            'avatar': host + user.find('avatar').text
+            } for user in data_users
+        }
+
+    return users
+
+
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.
@@ -86,6 +110,7 @@ def get_data():
     }
     """
     data = {}
+
     with open(app.config['DATA_CSV'], 'r') as csvfile:
         presence_reader = csv.reader(csvfile, delimiter=',')
         for i, row in enumerate(presence_reader):

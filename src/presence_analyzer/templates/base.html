@@ -16,6 +16,13 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart", "timeline"], 'language': 'pl'});
+        (function($) {
+            $(document).ready(function(){
+                $('#user_id').on('change', function () {
+                    $('.avatar').attr('src', $(this).find('option:selected').data('avatar'));
+                })
+            });
+        })(jQuery);
     </script>
     {% block script %}{% endblock %}
     
@@ -37,12 +44,18 @@
         <div id="content">
             <h2>Presence start-end weekday</h2>
             <p>
-                <select id="user_id" style="display: none">
+                <select id="user_id">
                     <option value="">--</option>
+                    {% for id, user in get_users().iteritems() %}
+                        <option value="{{ id }}" data-avatar="{{ user.avatar }}">{{ user.name }}</option>
+                    {% endfor %}
                 </select>
+                <div>
+                    <img class="avatar" src="" alt="">
+                </div>
                 <div id="chart_div" style="display: none">
                 </div>
-                <div id="loading">
+                <div id="loading" class="hidden">
                     <img src="{{ url_for('static', filename='img/loading.gif') }}" />
                 </div>
             </p>
